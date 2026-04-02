@@ -1,0 +1,18 @@
+{
+  "session_id": "7471d675-8a3a-4b17-a42c-89764fdf9846",
+  "created_at": "2026-04-02T13:02:57.178360",
+  "updated_at": "2026-04-02T13:03:14.070166",
+  "title": "Search for recent studies on intermittent fasting benefits",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Search for recent studies on intermittent fasting benefits",
+      "timestamp": "2026-04-02T13:02:57.178405"
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2026-04-02T13:03:14.070123"
+    }
+  ]
+}

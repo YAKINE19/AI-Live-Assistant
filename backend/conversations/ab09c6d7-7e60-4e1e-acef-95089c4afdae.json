@@ -1,0 +1,36 @@
+{
+  "session_id": "ab09c6d7-7e60-4e1e-acef-95089c4afdae",
+  "created_at": "2026-04-02T13:05:05.182943",
+  "updated_at": "2026-04-02T13:05:26.685310",
+  "title": "What are the latest developments in AI this week?",
+  "messages": [
+    {
+      "role": "user",
+      "content": "What are the latest developments in AI this week?",
+      "timestamp": "2026-04-02T13:05:05.182959"
+    },
+    {
+      "role": "assistant",
+      "content": "I encountered an error processing your request: registry.ollama.ai/library/llama3:latest does not support tools (status code: 400)\n\nPlease ensure Ollama is running: `ollama serve` and the model is available: `ollama pull llama3`",
+      "timestamp": "2026-04-02T13:05:06.079462",
+      "metadata": {
+        "sources": [],
+        "tool_calls": []
+      }
+    },
+    {
+      "role": "user",
+      "content": "hi",
+      "timestamp": "2026-04-02T13:05:26.293851"
+    },
+    {
+      "role": "assistant",
+      "content": "I encountered an error processing your request: registry.ollama.ai/library/llama3:latest does not support tools (status code: 400)\n\nPlease ensure Ollama is running: `ollama serve` and the model is available: `ollama pull llama3`",
+      "timestamp": "2026-04-02T13:05:26.685290",
+      "metadata": {
+        "sources": [],
+        "tool_calls": []
+      }
+    }
+  ]
+}

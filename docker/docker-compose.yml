@@ -1,0 +1,96 @@
+version: "3.9"
+
+services:
+  # ── Ollama LLM Server ────────────────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ai_assistant_ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    # Uncomment for GPU support:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ── Model Initializer (pulls model on first run) ─────────────────────────
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: ai_assistant_ollama_init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    volumes:
+      - ollama_data:/root/.ollama
+    entrypoint: >
+      sh -c "
+        OLLAMA_HOST=http://ollama:11434 ollama pull llama3 &&
+        echo 'Model llama3 ready!'
+      "
+    restart: on-failure
+
+  # ── FastAPI Backend ──────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: ai_assistant_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=llama3
+      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - CONVERSATIONS_DIR=/app/conversations
+      - FRONTEND_URL=http://localhost:8501
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    volumes:
+      - chroma_data:/app/chroma_db
+      - conversations_data:/app/conversations
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  # ── Streamlit Frontend ───────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: ai_assistant_frontend
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - BACKEND_URL=http://backend:8000/api
+    depends_on:
+      backend:
+        condition: service_healthy
+
+# ── Persistent Volumes ───────────────────────────────────────────────────────
+volumes:
+  ollama_data:
+    name: ai_assistant_ollama_data
+  chroma_data:
+    name: ai_assistant_chroma_data
+  conversations_data:
+    name: ai_assistant_conversations
